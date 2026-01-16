@@ -1,0 +1,244 @@
+You are a senior full-stack web engineer and security-conscious system architect.
+
+Your task is to design and scaffold an MVP web application called “Proof of Trend” ($POT).
+
+This is a production-grade MVP. Prioritize:
+- Correctness
+- Clean architecture
+- Security by default
+- Efficiency and scalability
+- Separation of concerns
+- Future proprietary data protection
+
+DO NOT generate placeholder spaghetti code.
+DO NOT hardcode secrets.
+DO NOT mix frontend and backend logic improperly.
+
+---
+
+## 1. PRODUCT OVERVIEW
+
+Proof of Trend is a web platform that provides:
+1) Proof of Trend – early trend discovery
+2) Proof of Price – historical pricing intelligence
+3) Proof of Execution – verifiable execution logging (light MVP version)
+
+Blockchain (Algorand) is used ONLY for:
+- Hash anchoring
+- Timestamp verification
+- Wallet identity
+
+No financial guarantees.
+No revenue claims.
+No custodial behavior.
+
+---
+
+## 2. TECH STACK (STRICT)
+
+Frontend:
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+
+Backend:
+- Node.js
+- TypeScript
+- REST API (not GraphQL for MVP)
+- Prisma ORM
+
+Database:
+- PostgreSQL
+- Time-series friendly schema
+
+Blockchain:
+- Algorand (hash anchoring only)
+- Wallet connect (read-only MVP)
+
+Auth:
+- Email + wallet address
+- JWT access tokens
+- Role-based access control
+
+AI:
+- API-based abstraction layer
+- NO direct vendor lock-in
+- All AI calls must be isolated in services
+
+---
+
+## 3. CORE ARCHITECTURE RULES
+
+- Frontend must NEVER talk directly to the database
+- Backend API must validate ALL inputs
+- All writes must be authenticated
+- All sensitive logic must live server-side
+- Hashes are stored on-chain, raw data is NOT
+- No proprietary trend data is exposed via public endpoints
+
+Use:
+- Service layer
+- Controller layer
+- Data access layer
+- Utility layer
+
+---
+
+## 4. DATABASE MODELS (MVP ONLY)
+
+Design Prisma models for:
+
+### User
+- id
+- email
+- walletAddress (optional)
+- role (user | admin)
+- createdAt
+
+### Trend
+- id
+- name
+- category
+- description
+- trendScore
+- detectedAt
+- createdAt
+
+### TrendHash
+- id
+- trendId
+- hash
+- blockchainTxId
+- timestamp
+
+### PriceSnapshot
+- id
+- trendId
+- source
+- price
+- recordedAt
+
+### ExecutionLog
+- id
+- userId
+- trendId
+- executionType
+- referenceUrl (optional)
+- createdAt
+
+All models must include:
+- Indexes where appropriate
+- Foreign key constraints
+- Soft-deletion readiness
+
+---
+
+## 5. API ENDPOINTS (REQUIRED)
+
+Implement REST endpoints with validation:
+
+### Trends
+- GET /api/trends
+- GET /api/trends/:id
+- POST /api/trends (admin only)
+
+### Price Intelligence
+- GET /api/trends/:id/prices
+
+### Execution
+- POST /api/executions
+- GET /api/users/:id/executions
+
+### Auth
+- POST /api/auth/login
+- POST /api/auth/logout
+- GET /api/auth/me
+
+All endpoints must:
+- Validate input
+- Sanitize output
+- Enforce auth rules
+- Return consistent response formats
+
+---
+
+## 6. FRONTEND PAGES (ALL MUST CONNECT)
+
+Implement the following pages and ensure navigation works:
+
+1. Homepage
+   - Explains Proof of Trend / Price / Execution
+   - CTA to dashboard
+
+2. Trend Dashboard
+   - List trends
+   - Filters
+   - Trend score visualization
+
+3. Trend Detail Page
+   - Trend metadata
+   - Price chart
+   - Execution CTA
+
+4. Execution Modal / Page
+   - Submit execution log
+   - Client-side validation
+   - Server-side verification
+
+5. User Profile
+   - Execution history
+   - Connected wallet status
+
+6. Pricing Page
+   - Free vs Pro
+   - $POT utility explanation
+
+---
+
+## 7. SECURITY REQUIREMENTS (MANDATORY)
+
+- Use environment variables for secrets
+- Rate-limit all POST endpoints
+- Protect against:
+  - SQL injection
+  - XSS
+  - CSRF
+- No wallet signing required in MVP
+- No raw blockchain private keys stored
+- Use server-side hashing utilities
+
+---
+
+## 8. PERFORMANCE & MAINTAINABILITY
+
+- Use async/await correctly
+- Avoid unnecessary re-renders
+- Cache read-heavy endpoints
+- Write reusable components
+- Write readable, commented code
+
+---
+
+## 9. WHAT TO OUTPUT
+
+Generate:
+- Folder structure
+- Prisma schema
+- API route handlers
+- Frontend pages
+- Utility services
+- Basic UI components
+- Clear TODO comments for post-MVP features
+
+DO NOT:
+- Overbuild governance
+- Add staking logic
+- Add ad marketplace
+- Add financial promises
+
+This MVP must be:
+- Stable
+- Understandable
+- Extendable
+
+Begin by scaffolding the project structure and Prisma schema first.
