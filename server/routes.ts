@@ -146,26 +146,35 @@ async function seedDatabase() {
     
     // Create Trends
     const trend1 = await storage.createTrend({
-      name: "Algorand DeFi Boom",
-      category: "DeFi",
-      description: "Surge in TVL across major Algorand protocols.",
-      trendScore: 85,
+      name: "Portable Neck Fan",
+      category: "Electronics",
+      description: "Hands-free cooling solution viral on TikTok.",
+      trendScore: 92,
+      productUrl: "https://example.com/product/neck-fan",
+      estimatedMargin: "65%",
+      sourcePlatform: "TikTok",
       detectedAt: new Date(),
     });
 
     const trend2 = await storage.createTrend({
-      name: "NFT Utility Era",
-      category: "NFT",
-      description: "Shift from PFP to utility-based NFTs in gaming.",
-      trendScore: 72,
+      name: "Self-Cleaning Mop",
+      category: "Home & Garden",
+      description: "High-demand cleaning tool for modern homes.",
+      trendScore: 88,
+      productUrl: "https://example.com/product/mop",
+      estimatedMargin: "50%",
+      sourcePlatform: "AliExpress",
       detectedAt: new Date(),
     });
 
     const trend3 = await storage.createTrend({
-      name: "Layer 2 Adoption",
-      category: "Infrastructure",
-      description: "Increasing transaction volume on L2 solutions.",
-      trendScore: 90,
+      name: "Ergonomic Pet Bed",
+      category: "Pet Supplies",
+      description: "Orthopedic comfort for pets, trending on Instagram.",
+      trendScore: 85,
+      productUrl: "https://example.com/product/pet-bed",
+      estimatedMargin: "45%",
+      sourcePlatform: "Instagram",
       detectedAt: new Date(),
     });
 

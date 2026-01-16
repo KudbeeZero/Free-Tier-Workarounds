@@ -52,6 +52,10 @@ export const trends = pgTable("trends", {
   category: text("category").notNull(),
   description: text("description").notNull(),
   trendScore: integer("trend_score").notNull(),
+  productUrl: text("product_url"),
+  imageUrl: text("image_url"),
+  estimatedMargin: text("estimated_margin"),
+  sourcePlatform: text("source_platform"), // e.g., 'TikTok', 'AliExpress'
   detectedAt: timestamp("detected_at").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
