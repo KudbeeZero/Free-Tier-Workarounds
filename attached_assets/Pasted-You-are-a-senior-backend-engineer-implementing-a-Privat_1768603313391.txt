@@ -1,0 +1,171 @@
+You are a senior backend engineer implementing a Private Data Isolation Layer
+for an existing production-grade MVP called “Proof of Trend”.
+
+Your goal is to protect proprietary data, algorithms, and AI logic from exposure
+while keeping the application functional and extensible.
+
+This is NOT theoretical. Implement real, enforceable boundaries in code.
+
+---
+
+## 1. CORE RULES (NON-NEGOTIABLE)
+
+- No proprietary logic may be exposed via API responses
+- No raw trend sources, weights, formulas, or AI prompts may be returned to clients
+- No private data may be logged
+- Frontend must only receive derived, sanitized outputs
+- Controllers must NEVER import private modules directly
+
+---
+
+## 2. CREATE ISOLATED DIRECTORY
+
+Create a new directory:
+
+/src/private/
+
+This directory contains proprietary logic ONLY.
+
+Files inside this directory:
+- trendScoring.ts
+- priceNormalization.ts
+- aiHeuristics.ts
+- sourceWeights.ts
+
+This directory:
+- Is NOT referenced by frontend
+- Is ONLY imported by service-layer modules
+- Exports only pure functions (no side effects)
+
+---
+
+## 3. IMPLEMENT PRIVATE MODULES
+
+### trendScoring.ts
+- Accepts normalized trend input data
+- Applies proprietary scoring logic
+- Returns:
+  - trendScore (number)
+  - confidenceBand ("low" | "medium" | "high")
+
+DO NOT return:
+- raw inputs
+- formulas
+- weights
+
+---
+
+### priceNormalization.ts
+- Accepts historical price snapshots
+- Normalizes across sources
+- Calculates percentile ranking
+- Returns:
+  - percentile (0–100)
+  - label ("cheap" | "neutral" | "expensive")
+
+---
+
+### aiHeuristics.ts
+- Contains AI prompt construction logic
+- Accepts abstracted signals ONLY
+- Never receives raw proprietary data
+- Returns summarized recommendations
+
+DO NOT log prompts or responses.
+
+---
+
+## 4. SERVICE LAYER MEDIATION (CRITICAL)
+
+Create or update service-layer modules:
+
+/src/services/trendService.ts
+/src/services/priceService.ts
+
+Rules:
+- Services MAY import from /private
+- Controllers MAY import from services ONLY
+- Controllers MUST NOT import from /private
+
+Services must:
+- Call private modules
+- Sanitize outputs
+- Return DTO-safe objects
+
+---
+
+## 5. CONTROLLER SAFETY
+
+Update API controllers so that:
+
+- Responses only include:
+  - trendScore
+  - confidenceBand
+  - priceLabel
+  - percentile
+- No debug metadata
+- No internal objects
+- No accidental object spreading
+
+Add explicit response shaping.
+
+---
+
+## 6. LOGGING & ERROR HANDLING
+
+Implement safe logging:
+- Log error codes, not payloads
+- Never log:
+  - trend inputs
+  - price history
+  - AI prompts
+  - private module outputs
+
+Errors should:
+- Return generic messages to client
+- Store detailed stack traces server-side ONLY
+
+---
+
+## 7. AI SAFETY GUARANTEES
+
+- AI calls must be wrapped in aiService abstraction
+- AI receives:
+  - trendScore
+  - percentile bands
+  - categorical labels
+- AI NEVER receives:
+  - raw trend data
+  - pricing sources
+  - weights
+  - execution logs
+
+---
+
+## 8. ENFORCEMENT VIA TYPES
+
+Use TypeScript to enforce boundaries:
+- Private module return types must be minimal
+- Controller response types must be explicit DTOs
+- Prevent accidental passthrough of private data
+
+---
+
+## 9. OUTPUT EXPECTATION
+
+Implement:
+- Folder structure
+- Private modules with stubbed proprietary logic
+- Service mediation layer
+- Controller updates
+- Inline comments explaining boundaries
+- TODO comments for post-MVP hardening
+
+DO NOT:
+- Add encryption layers
+- Add blockchain logic
+- Add new product features
+
+This task is ONLY about isolating proprietary logic safely.
+
+Begin implementation now.

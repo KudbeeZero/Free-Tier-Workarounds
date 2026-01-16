@@ -8,6 +8,9 @@ import { registerChatRoutes } from "./replit_integrations/chat";
 import { registerImageRoutes } from "./replit_integrations/image";
 import { registerAudioRoutes } from "./replit_integrations/audio";
 
+import { trendService } from "./services/trendService";
+import { priceService } from "./services/priceService";
+
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -27,13 +30,13 @@ export async function registerRoutes(
   app.get(api.trends.list.path, async (req, res) => {
     const category = req.query.category as string | undefined;
     const search = req.query.search as string | undefined;
-    const trends = await storage.getTrends(category, search);
+    const trends = await trendService.getTrends(category, search);
     res.json(trends);
   });
 
   app.get(api.trends.get.path, async (req, res) => {
     const id = parseInt(req.params.id);
-    const trend = await storage.getTrend(id);
+    const trend = await trendService.getTrend(id);
     if (!trend) {
       return res.status(404).json({ message: "Trend not found" });
     }
@@ -55,9 +58,32 @@ export async function registerRoutes(
 
   app.get(api.trends.getPrices.path, async (req, res) => {
     const id = parseInt(req.params.id);
-    const prices = await storage.getPriceSnapshots(id);
-    res.json(prices);
+    const result = await priceService.getTrendPrices(id);
+    res.json(result);
   });
+
+  // AI Recommendation (Sanitized)
+  app.get("/api/trends/:id/recommendation", isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const trend = await trendService.getTrend(id);
+      if (!trend) return res.status(404).json({ message: "Trend not found" });
+      
+      const priceResult = await priceService.getTrendPrices(id);
+      const recommendation = await aiService.getTrendRecommendation(
+        id, 
+        trend.trendScore, 
+        priceResult.intelligence.percentile, 
+        priceResult.intelligence.label
+      );
+      
+      res.json({ recommendation });
+    } catch (error) {
+      console.error("AI Recommendation Error:", error);
+      res.status(500).json({ message: "Failed to generate recommendation" });
+    }
+  });
+
 
   app.get(api.trends.getHashes.path, async (req, res) => {
     const id = parseInt(req.params.id);
