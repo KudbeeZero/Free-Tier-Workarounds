@@ -19,12 +19,24 @@ export function TrendCard({ trend }: TrendCardProps) {
         <div className="p-6 relative z-10 flex flex-col h-full">
           <div className="flex justify-between items-start mb-4">
             <div className="flex flex-col gap-1">
-              <Badge variant="outline" className="w-fit mb-1 text-[10px] tracking-wider uppercase opacity-70">
-                {trend.category}
-              </Badge>
-              <h3 className="text-xl font-bold font-display group-hover:text-primary transition-colors">
+              <div className="flex items-center gap-2 mb-1">
+                <Badge variant="outline" className="text-[10px] tracking-wider uppercase opacity-70">
+                  {trend.category}
+                </Badge>
+                {trend.sourcePlatform && (
+                  <Badge variant="secondary" className="text-[10px] tracking-wider uppercase bg-primary/10 text-primary border-none">
+                    {trend.sourcePlatform}
+                  </Badge>
+                )}
+              </div>
+              <h3 className="text-xl font-bold font-display group-hover:text-primary transition-colors line-clamp-1">
                 {trend.name}
               </h3>
+              {trend.estimatedMargin && (
+                <span className="text-xs text-green-500 font-mono">
+                  Est. Margin: {trend.estimatedMargin}
+                </span>
+              )}
             </div>
             <div className="flex flex-col items-end">
               <span className="text-2xl font-bold font-mono text-primary flex items-center gap-1">

@@ -45,9 +45,30 @@ export default function TrendDetail() {
           <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight mb-4">
             {trend.name}
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed">
+          <div className="flex flex-wrap gap-4 mb-4">
+            {trend.sourcePlatform && (
+              <div className="flex flex-col">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Source</span>
+                <span className="text-sm font-semibold">{trend.sourcePlatform}</span>
+              </div>
+            )}
+            {trend.estimatedMargin && (
+              <div className="flex flex-col">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Margin</span>
+                <span className="text-sm font-semibold text-green-500">{trend.estimatedMargin}</span>
+              </div>
+            )}
+          </div>
+          <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed mb-6">
             {trend.description}
           </p>
+          {trend.productUrl && (
+            <Button variant="outline" asChild className="gap-2">
+              <a href={trend.productUrl} target="_blank" rel="noopener noreferrer">
+                View Original Product <ExternalLink className="w-4 h-4" />
+              </a>
+            </Button>
+          )}
         </div>
         
         <div className="flex flex-col gap-4 w-full md:w-auto">
