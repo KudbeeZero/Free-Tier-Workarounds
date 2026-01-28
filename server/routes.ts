@@ -133,6 +133,18 @@ export async function registerRoutes(
     res.json(updatedUser);
   });
 
+  // Crypto Market Proxy (CoinGecko Workaround)
+  app.get("/api/market/top-assets", async (req, res) => {
+    try {
+      const perPage = req.query.per_page || "50";
+      const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false`);
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch market data" });
+    }
+  });
+
   // Seed Data
   await seedDatabase();
 

@@ -7,7 +7,8 @@ import {
   LogOut, 
   Wallet,
   Menu,
-  X
+  X,
+  BarChart3
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <nav className="flex-1 px-4 space-y-2 mt-4">
         <NavLink href="/" icon={LayoutDashboard} label="Dashboard" />
+        <NavLink href="/market" icon={BarChart3} label="Markets" />
         <NavLink href="/profile" icon={User} label="Profile" />
       </nav>
 

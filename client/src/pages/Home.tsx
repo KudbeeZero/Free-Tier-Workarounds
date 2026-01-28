@@ -1,8 +1,9 @@
 import { useTrends } from "@/hooks/use-trends";
 import { TrendCard } from "@/components/TrendCard";
+import { MarketTicker } from "@/components/MarketTicker";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, SlidersHorizontal, Plus } from "lucide-react";
+import { Search, SlidersHorizontal, Plus, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,25 +14,30 @@ export default function Home() {
   const { data: trends, isLoading } = useTrends({ search, category });
   const { user } = useAuth();
 
-  const categories = ["All", "DeFi", "NFT", "GameFi", "Infrastructure", "Meme"];
+  const categories = ["All", "Electronics", "Home & Garden", "Pet Supplies", "Fashion", "Beauty"];
 
   return (
     <div className="space-y-8">
+      {/* Market Ticker */}
+      <div className="-mx-4 md:-mx-8">
+        <MarketTicker />
+      </div>
+
       {/* Hero Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-            Market Intelligence
+          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground flex items-center gap-3">
+            <ShoppingBag className="text-primary w-8 h-8" />
+            Product Trends
           </h1>
           <p className="text-muted-foreground mt-2">
-            AI-driven trend detection anchored on Algorand.
+            Winning dropshipping products detected by AI and verified on Algorand.
           </p>
         </div>
         
-        {/* Mock Create Button - functional if we had the form, but just visual for now or links to a create page */}
         {user?.role === 'admin' && (
           <Button className="gap-2">
-            <Plus className="w-4 h-4" /> Add Trend
+            <Plus className="w-4 h-4" /> Add Product
           </Button>
         )}
       </div>
