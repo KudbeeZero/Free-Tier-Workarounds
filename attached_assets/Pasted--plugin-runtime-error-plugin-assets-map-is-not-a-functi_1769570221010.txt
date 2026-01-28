@@ -1,0 +1,56 @@
+[plugin:runtime-error-plugin] assets?.map is not a function. (In 'assets?.map(
+    (asset) => /* @__PURE__ */ jsxDEV("div", { "data-replit-metadata": "client/src/components/MarketTicker.tsx:27:10", "data-component-name": "div", className: "flex items-center gap-3", children: [
+      /* @__PURE__ */ jsxDEV("img", { "data-replit-metadata": "client/src/components/MarketTicker.tsx:28:12", "data-component-name": "img", src: asset.image, alt: asset.name, className: "w-5 h-5 rounded-full" }, void 0, false, {
+        fileName: "/home/runner/workspace/client/src/components/MarketTicker.tsx",
+        lineNumber: 47,
+        columnNumber: 13
+      }, this),
+      /* @__PURE__ */ jsxDEV("span", { "data-replit-metadata": "client/src/components/MarketTicker.tsx:29:12", "data-component-name": "span", className: "font-bold text-sm uppercase", children: asset.symbol }, void 0, false, {
+        fileName: "/home/runner/workspace/client/src/components/MarketTicker.tsx",
+        lineNumber: 48,
+        columnNumber: 13
+      }, this),
+      /* @__PURE__ */ jsxDEV("span", { "data-replit-metadata": "client/src/components/MarketTicker.tsx:30:12", "data-component-name": "span", className: "font-mono text-sm", children: [
+        "$",
+        asset.current_price.toLocaleString()
+      ] }, void 0, true, {
+        fileName: "/home/runner/workspace/client/src/components/MarketTicker.tsx",
+        lineNumber: 49,
+        columnNumber: 13
+      }, this),
+      /* @__PURE__ */ jsxDEV(
+        Badge,
+        {
+          "data-replit-metadata": "client/src/components/MarketTicker.tsx:31:12",
+          "data-component-name": "Badge",
+          variant: "outline",
+          className: `text-[10px] border-none flex items-center gap-0.5 ${asset.price_change_percentage_24h >= 0 ? "text-green-500 bg-green-500/10" : "text-red-500 bg-red-500/10"}`,
+          children: [
+            asset.price_change_percentage_24h >= 0 ? /* @__PURE__ */ jsxDEV(TrendingUp, { "data-replit-metadata": "client/src/components/MarketTicker.tsx:35:56", "data-component-name": "TrendingUp", className: "w-3 h-3" }, void 0, false, {
+              fileName: "/home/runner/workspace/client/src/components/MarketTicker.tsx",
+              lineNumber: 54,
+              columnNumber: 57
+            }, this) : /* @__PURE__ */ jsxDEV(TrendingDown, { "data-replit-metadata": "client/src/components/MarketTicker.tsx:35:93", "data-component-name": "TrendingDown", className: "w-3 h-3" }, void 0, false, {
+              fileName: "/home/runner/workspace/client/src/components/MarketTicker.tsx",
+              lineNumber: 54,
+              columnNumber: 195
+            }, this),
+            Math.abs(asset.price_change_percentage_24h).toFixed(2),
+            "%"
+          ]
+        },
+        void 0,
+        true,
+        {
+          fileName: "/home/runner/workspace/client/src/components/MarketTicker.tsx",
+          lineNumber: 50,
+          columnNumber: 13
+        },
+        this
+      )
+    ] }, asset.id, true, {
+      fileName: "/home/runner/workspace/client/src/components/MarketTicker.tsx",
+      lineNumber: 46,
+      columnNumber: 9
+    }, this)
+  )', 'assets?.map' is undefined)

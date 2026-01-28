@@ -28,10 +28,10 @@ export default function Market() {
     refetchInterval: 60000,
   });
 
-  const filteredAssets = assets?.filter(a => 
+  const filteredAssets = Array.isArray(assets) ? assets.filter(a => 
     a.name.toLowerCase().includes(search.toLowerCase()) || 
     a.symbol.toLowerCase().includes(search.toLowerCase())
-  );
+  ) : [];
 
   return (
     <div className="space-y-8">
@@ -53,6 +53,10 @@ export default function Market() {
 
       {isLoading ? (
         <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+      ) : !Array.isArray(assets) ? (
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <p className="text-muted-foreground text-center">Market data provider is currently rate limited.<br/>Please try again in a few minutes.</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredAssets?.map((asset) => (

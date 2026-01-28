@@ -139,6 +139,15 @@ export async function registerRoutes(
       const perPage = req.query.per_page || "50";
       const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false`);
       const data = await response.json();
+      
+      if (data.status?.error_code === 429) {
+        return res.status(429).json({ message: "Rate limit exceeded" });
+      }
+      
+      if (!Array.isArray(data)) {
+        return res.status(500).json({ message: "Invalid data format from provider" });
+      }
+
       res.json(data);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch market data" });

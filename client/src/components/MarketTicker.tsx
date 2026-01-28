@@ -20,6 +20,10 @@ export function MarketTicker() {
 
   if (isLoading) return <div className="h-12 flex items-center justify-center"><Loader2 className="w-4 h-4 animate-spin text-primary" /></div>;
 
+  if (!Array.isArray(assets)) {
+    return <div className="h-12 flex items-center justify-center text-xs text-muted-foreground italic px-4">Market data temporarily unavailable (Rate limit)</div>;
+  }
+
   return (
     <div className="w-full overflow-hidden bg-card/30 border-y border-border/50 py-3 backdrop-blur-sm">
       <div className="flex animate-scroll whitespace-nowrap gap-8 px-4">
