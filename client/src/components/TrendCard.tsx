@@ -65,7 +65,7 @@ export function TrendCard({ trend }: TrendCardProps) {
           </p>
 
           {analytics && (
-            <div className="grid grid-cols-2 gap-2 mb-6 p-3 rounded-lg bg-secondary/30 border border-border/50">
+            <div className="grid grid-cols-2 gap-2 mb-4 p-3 rounded-lg bg-secondary/30 border border-border/50">
               <div className="flex flex-col">
                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Historical Low</span>
                 <span className="text-sm font-mono font-bold">${analytics.lowestPrice}</span>
@@ -79,6 +79,15 @@ export function TrendCard({ trend }: TrendCardProps) {
               </div>
             </div>
           )}
+
+          <div className="flex gap-2 mb-6">
+            <Link href="/compare" className="w-full">
+              <Button variant="outline" size="sm" className="w-full text-xs gap-1.5 h-8">
+                <BarChart3 className="w-3.5 h-3.5" />
+                Compare
+              </Button>
+            </Link>
+          </div>
           
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-4 border-t border-border/50">
             <div className="flex items-center gap-1.5">

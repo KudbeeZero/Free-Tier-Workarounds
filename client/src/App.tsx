@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import TrendDetail from "@/pages/TrendDetail";
 import Profile from "@/pages/Profile";
 import Market from "@/pages/Market";
+import Compare from "@/pages/Compare";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -18,6 +19,7 @@ function Router() {
         <Route path="/trends/:id" component={TrendDetail} />
         <Route path="/profile" component={Profile} />
         <Route path="/market" component={Market} />
+        <Route path="/compare" component={Compare} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
