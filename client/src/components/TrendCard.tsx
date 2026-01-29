@@ -2,14 +2,21 @@ import { Link } from "wouter";
 import { Trend } from "@shared/routes";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpRight, Activity } from "lucide-react";
+import { ArrowUpRight, Activity, TrendingDown, TrendingUp, AlertCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 
 interface TrendCardProps {
   trend: Trend;
 }
 
 export function TrendCard({ trend }: TrendCardProps) {
+  const { data: marketData } = useQuery({
+    queryKey: ["/api/trends", trend.id, "prices"],
+  });
+
+  const analytics = marketData?.intelligence;
+
   return (
     <Link href={`/trends/${trend.id}`} className="block group">
       <Card className="h-full bg-card border border-border/50 hover:border-primary/50 transition-all duration-300 overflow-hidden relative">
@@ -46,10 +53,32 @@ export function TrendCard({ trend }: TrendCardProps) {
               <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Trend Score</span>
             </div>
           </div>
+
+          {trend.imageUrl && (
+            <div className="w-full h-32 mb-4 rounded-lg overflow-hidden bg-muted">
+              <img src={trend.imageUrl} alt={trend.name} className="w-full h-full object-cover" />
+            </div>
+          )}
           
           <p className="text-muted-foreground text-sm line-clamp-2 mb-6 flex-1">
             {trend.description}
           </p>
+
+          {analytics && (
+            <div className="grid grid-cols-2 gap-2 mb-6 p-3 rounded-lg bg-secondary/30 border border-border/50">
+              <div className="flex flex-col">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Historical Low</span>
+                <span className="text-sm font-mono font-bold">${analytics.lowestPrice}</span>
+              </div>
+              <div className="flex flex-col items-end text-right">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Prediction</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm font-mono font-bold text-primary">${analytics.predictedPrice}</span>
+                  <TrendingUp className="w-3 h-3 text-primary" />
+                </div>
+              </div>
+            </div>
+          )}
           
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-4 border-t border-border/50">
             <div className="flex items-center gap-1.5">

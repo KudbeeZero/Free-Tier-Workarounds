@@ -95,6 +95,28 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(priceSnapshots).where(eq(priceSnapshots.trendId, trendId)).orderBy(priceSnapshots.recordedAt);
   }
 
+  async getTrendAnalytics(trendId: number) {
+    const prices = await this.getPriceSnapshots(trendId);
+    if (prices.length === 0) return null;
+
+    const numericPrices = prices.map(p => parseFloat(p.price));
+    const lowest = Math.min(...numericPrices);
+    const current = numericPrices[numericPrices.length - 1];
+    
+    // Simple linear projection for "future price"
+    const last = numericPrices[numericPrices.length - 1];
+    const prev = numericPrices[numericPrices.length - 2] || last;
+    const diff = last - prev;
+    const predicted = last + (diff * 1.5); // Slightly aggressive projection for "future prediction"
+
+    return {
+      lowestPrice: lowest.toFixed(2),
+      currentPrice: current.toFixed(2),
+      predictedPrice: predicted.toFixed(2),
+      confidence: diff > 0 ? "High" : "Stable"
+    };
+  }
+
   async createPriceSnapshot(snapshot: InsertPriceSnapshot): Promise<PriceSnapshot> {
     const [newSnapshot] = await db.insert(priceSnapshots).values(snapshot).returning();
     return newSnapshot;
