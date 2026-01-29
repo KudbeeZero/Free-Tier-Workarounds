@@ -2,7 +2,8 @@ import { Link } from "wouter";
 import { Trend } from "@shared/routes";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpRight, Activity, TrendingDown, TrendingUp, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight, Activity, TrendingDown, TrendingUp, AlertCircle, BarChart3 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 

@@ -57,16 +57,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <div className="p-4 mt-auto border-t border-border/50">
         {user ? (
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold text-xs">
-                {user.firstName?.[0] || user.username?.[0] || "U"}
+                {user.firstName?.[0] || "U"}
               </div>
               <div className="flex flex-col overflow-hidden">
-                <span className="text-sm font-medium truncate">{user.firstName || user.username}</span>
+                <span className="text-sm font-medium truncate">{user.firstName || "User"}</span>
                 <span className="text-xs text-muted-foreground font-mono truncate">
-                  {user.walletAddress ? 
-                    `${user.walletAddress.substring(0, 4)}...${user.walletAddress.substring(user.walletAddress.length - 4)}` 
-                    : "No Wallet"}
+                  PoT Verified Alpha
                 </span>
               </div>
             </div>
