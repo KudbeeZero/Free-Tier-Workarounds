@@ -1,4 +1,4 @@
-import { 
+import {
   users, trends, trendHashes, priceSnapshots, executionLogs,
   type User, type InsertUser,
   type Trend, type InsertTrend,
@@ -7,7 +7,7 @@ import {
   type ExecutionLog, type InsertExecutionLog
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, ilike } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -32,6 +32,11 @@ export interface IStorage {
   // Execution Logs
   getExecutionLogs(userId: string): Promise<ExecutionLog[]>;
   createExecutionLog(log: InsertExecutionLog): Promise<ExecutionLog>;
+
+  // Ingestion
+  upsertTrendByExternalId(externalId: string, sourcePlatform: string, data: InsertTrend): Promise<{ trend: Trend; isNew: boolean }>;
+  getLastTwoPriceSnapshots(trendId: number): Promise<PriceSnapshot[]>;
+  updateTrendVelocity(trendId: number, velocity: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -62,11 +67,17 @@ export class DatabaseStorage implements IStorage {
 
   // Trends
   async getTrends(category?: string, search?: string): Promise<Trend[]> {
-    let query = db.select().from(trends);
+    const conditions = [];
     if (category) {
-      query = query.where(eq(trends.category, category)) as any;
+      conditions.push(eq(trends.category, category));
     }
-    // Simple search implementation could be added with like/ilike
+    if (search) {
+      conditions.push(ilike(trends.name, `%${search}%`));
+    }
+    let query = db.select().from(trends);
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
     return await query.orderBy(desc(trends.trendScore));
   }
 
@@ -130,6 +141,56 @@ export class DatabaseStorage implements IStorage {
   async createExecutionLog(log: InsertExecutionLog): Promise<ExecutionLog> {
     const [newLog] = await db.insert(executionLogs).values(log).returning();
     return newLog;
+  }
+
+  // ---- Ingestion helpers ----
+
+  async upsertTrendByExternalId(
+    externalId: string,
+    sourcePlatform: string,
+    data: InsertTrend
+  ): Promise<{ trend: Trend; isNew: boolean }> {
+    // Check if this external product already exists
+    const [existing] = await db
+      .select()
+      .from(trends)
+      .where(and(eq(trends.externalId, externalId), eq(trends.sourcePlatform, sourcePlatform)));
+
+    if (existing) {
+      // Update mutable fields (title, image, category, score may change)
+      const [updated] = await db
+        .update(trends)
+        .set({
+          name: data.name,
+          imageUrl: data.imageUrl,
+          category: data.category,
+          productUrl: data.productUrl,
+          trendScore: data.trendScore,
+        })
+        .where(eq(trends.id, existing.id))
+        .returning();
+      return { trend: updated, isNew: false };
+    }
+
+    // Insert new trend
+    const [created] = await db.insert(trends).values(data).returning();
+    return { trend: created, isNew: true };
+  }
+
+  async getLastTwoPriceSnapshots(trendId: number): Promise<PriceSnapshot[]> {
+    return await db
+      .select()
+      .from(priceSnapshots)
+      .where(eq(priceSnapshots.trendId, trendId))
+      .orderBy(desc(priceSnapshots.recordedAt))
+      .limit(2);
+  }
+
+  async updateTrendVelocity(trendId: number, velocity: string): Promise<void> {
+    await db
+      .update(trends)
+      .set({ priceVelocity: velocity })
+      .where(eq(trends.id, trendId));
   }
 }
 
