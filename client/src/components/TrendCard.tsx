@@ -5,16 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Activity, TrendingDown, TrendingUp, AlertCircle, BarChart3 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
+import { useTrendPrices } from "@/hooks/use-trends";
 
 interface TrendCardProps {
   trend: Trend;
 }
 
 export function TrendCard({ trend }: TrendCardProps) {
-  const { data: marketData } = useQuery({
-    queryKey: ["/api/trends", trend.id, "prices"],
-  });
+  const { data: marketData } = useTrendPrices(trend.id);
 
   const analytics = marketData?.intelligence;
 

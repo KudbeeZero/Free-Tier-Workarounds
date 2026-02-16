@@ -18,10 +18,10 @@ export default function Profile() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold text-3xl">
-            {user.firstName?.[0] || user.username?.[0]}
+            {user.firstName?.[0] || user.email?.[0] || "?"}
           </div>
           <div>
-            <h1 className="text-2xl font-bold font-display">{user.firstName || user.username}</h1>
+            <h1 className="text-2xl font-bold font-display">{user.firstName || user.email}</h1>
             <p className="text-muted-foreground">{user.email}</p>
           </div>
         </div>
