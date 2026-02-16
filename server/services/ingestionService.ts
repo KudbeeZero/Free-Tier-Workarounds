@@ -16,12 +16,14 @@
 import { storage } from "../storage";
 import { EventEmitter } from "events";
 import type { Trend } from "@shared/schema";
+import { calculateTrendScore } from "../private/trendScoring";
 import {
   type CanonicalProduct,
   type ProductSource,
   normalizeProduct,
 } from "./sources/normalizeProduct";
 import { aliExpressSource } from "./sources/aliExpressSource";
+import { tiktokSource } from "./sources/tiktokSource";
 
 // ---------------------------------------------------------------------------
 // Event bus — other modules (blockchain stamper, notifications) can subscribe
@@ -41,8 +43,8 @@ export const EVENT_NEW_TREND = "trend:discovered";
 
 const sources: ProductSource[] = [
   aliExpressSource,
+  tiktokSource,
   // Add new sources here:
-  // tiktokSource,
   // temuSource,
   // shopifySource,
 ];
@@ -224,24 +226,37 @@ async function processProduct(
     recordedAt: new Date(),
   });
 
-  // Compute velocity from last two snapshots
-  await computeVelocity(trend);
+  // Compute velocity from last two snapshots, then recompute composite score
+  await computeVelocityAndScore(trend, product.source);
 }
 
 // ---------------------------------------------------------------------------
-// Velocity computation
+// Velocity computation + score recomputation
 // ---------------------------------------------------------------------------
 
-async function computeVelocity(trend: Trend): Promise<void> {
+async function computeVelocityAndScore(trend: Trend, source: string): Promise<void> {
   const snapshots = await storage.getLastTwoPriceSnapshots(trend.id);
-  if (snapshots.length < 2) return;
+  let velocity: string | null = null;
 
-  // snapshots are ordered DESC by recordedAt: [newest, older]
-  const current = parseFloat(snapshots[0].price);
-  const previous = parseFloat(snapshots[1].price);
+  if (snapshots.length >= 2) {
+    const current = parseFloat(snapshots[0].price);
+    const previous = parseFloat(snapshots[1].price);
 
-  if (previous === 0) return;
+    if (previous !== 0) {
+      const pctChange = ((current - previous) / previous) * 100;
+      velocity = pctChange.toFixed(2);
+      await storage.updateTrendVelocity(trend.id, velocity);
+    }
+  }
 
-  const pctChange = ((current - previous) / previous) * 100;
-  await storage.updateTrendVelocity(trend.id, pctChange.toFixed(2));
+  // Recompute composite score using all available signals
+  const snapshotCount = await storage.getSnapshotCount(trend.id);
+  const { trendScore } = calculateTrendScore({
+    rawScore: trend.trendScore,
+    priceVelocity: velocity,
+    sourcePlatform: source,
+    snapshotCount,
+  });
+
+  await storage.updateTrendScore(trend.id, trendScore);
 }

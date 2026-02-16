@@ -7,7 +7,7 @@ import {
   type ExecutionLog, type InsertExecutionLog
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, ilike } from "drizzle-orm";
+import { eq, desc, and, ilike, count } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -27,6 +27,7 @@ export interface IStorage {
 
   // Price Snapshots
   getPriceSnapshots(trendId: number): Promise<PriceSnapshot[]>;
+  getSnapshotCount(trendId: number): Promise<number>;
   createPriceSnapshot(snapshot: InsertPriceSnapshot): Promise<PriceSnapshot>;
 
   // Execution Logs
@@ -37,6 +38,7 @@ export interface IStorage {
   upsertTrendByExternalId(externalId: string, sourcePlatform: string, data: InsertTrend): Promise<{ trend: Trend; isNew: boolean }>;
   getLastTwoPriceSnapshots(trendId: number): Promise<PriceSnapshot[]>;
   updateTrendVelocity(trendId: number, velocity: string): Promise<void>;
+  updateTrendScore(trendId: number, score: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -104,6 +106,14 @@ export class DatabaseStorage implements IStorage {
   // Price Snapshots
   async getPriceSnapshots(trendId: number): Promise<PriceSnapshot[]> {
     return await db.select().from(priceSnapshots).where(eq(priceSnapshots.trendId, trendId)).orderBy(priceSnapshots.recordedAt);
+  }
+
+  async getSnapshotCount(trendId: number): Promise<number> {
+    const [row] = await db
+      .select({ value: count() })
+      .from(priceSnapshots)
+      .where(eq(priceSnapshots.trendId, trendId));
+    return row?.value ?? 0;
   }
 
   async getTrendAnalytics(trendId: number) {
@@ -190,6 +200,13 @@ export class DatabaseStorage implements IStorage {
     await db
       .update(trends)
       .set({ priceVelocity: velocity })
+      .where(eq(trends.id, trendId));
+  }
+
+  async updateTrendScore(trendId: number, score: number): Promise<void> {
+    await db
+      .update(trends)
+      .set({ trendScore: score })
       .where(eq(trends.id, trendId));
   }
 }
