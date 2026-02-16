@@ -13,6 +13,7 @@
 
 import cron, { type ScheduledTask } from "node-cron";
 import { runIngestion, ingestionEvents, EVENT_NEW_TREND } from "../services/ingestionService";
+import { seedMockData } from "../seedData";
 import type { Trend } from "@shared/schema";
 
 // ---------------------------------------------------------------------------
@@ -50,8 +51,13 @@ export function startTrendCron(): void {
 
   console.log("[cron] Trend ingestion scheduled: 06:00 & 18:00 UTC");
 
-  // Fire initial run after a short delay so the server can finish booting
-  setTimeout(() => {
+  // Fire initial seed + ingestion after a short delay so the server can finish booting
+  setTimeout(async () => {
+    try {
+      await seedMockData();
+    } catch (err) {
+      console.error("[cron] Seed failed (non-fatal):", err);
+    }
     console.log("[cron] Running initial ingestion on startup...");
     triggerIngestion();
   }, 3000);
