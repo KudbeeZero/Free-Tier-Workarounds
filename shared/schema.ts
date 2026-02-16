@@ -55,10 +55,14 @@ export const trends = pgTable("trends", {
   productUrl: text("product_url"),
   imageUrl: text("image_url"),
   estimatedMargin: text("estimated_margin"),
-  sourcePlatform: text("source_platform"), // e.g., 'TikTok', 'AliExpress'
+  sourcePlatform: text("source_platform"), // e.g., 'tiktok', 'aliexpress'
+  externalId: text("external_id"), // Unique product ID from source platform
+  priceVelocity: text("price_velocity"), // Percent change between last two snapshots
   detectedAt: timestamp("detected_at").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => [
+  index("idx_trends_external_source").on(table.externalId, table.sourcePlatform),
+]);
 
 export const trendHashes = pgTable("trend_hashes", {
   id: serial("id").primaryKey(),
