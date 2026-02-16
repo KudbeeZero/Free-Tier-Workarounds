@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
 import { Activity, ShieldCheck, Link as LinkIcon, ExternalLink } from "lucide-react";
 
 export default function TrendDetail() {
@@ -97,7 +98,7 @@ export default function TrendDetail() {
                 <Badge variant="outline" className="cursor-pointer hover:bg-secondary">30d</Badge>
               </div>
             </div>
-            <PriceChart data={prices || []} isLoading={pricesLoading} />
+            <PriceChart data={prices?.snapshots || []} isLoading={pricesLoading} />
           </Card>
 
           {/* About Section */}

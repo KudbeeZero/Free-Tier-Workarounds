@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl } from "@shared/routes";
+import type { PriceSnapshot } from "@shared/routes";
 import { InsertTrend } from "@shared/schema";
 
 // Helper to handle API responses correctly
@@ -36,12 +37,22 @@ export function useTrend(id: number) {
   });
 }
 
+export interface TrendPriceData {
+  snapshots: PriceSnapshot[];
+  intelligence: {
+    lowestPrice: string;
+    currentPrice: string;
+    predictedPrice: string;
+    confidence: string;
+  } | null;
+}
+
 export function useTrendPrices(id: number) {
-  return useQuery({
+  return useQuery<TrendPriceData>({
     queryKey: [api.trends.getPrices.path, id],
     queryFn: async () => {
       const url = buildUrl(api.trends.getPrices.path, { id });
-      return api.trends.getPrices.responses[200].parse(await fetcher(url));
+      return fetcher<TrendPriceData>(url);
     },
     enabled: !!id,
   });
